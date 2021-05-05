@@ -5,7 +5,7 @@ const Buyers = require('../Models/BuyerModel');
 
 router.get('/:id', async (req, res) => {
     try {
-        const buyers = await Buyers.find({sellerId : req.params.id});
+        const buyers = await Buyers.find({sellerId : req.params.id})
         res.send(buyers);
     } catch (error) {
         res.send(error)
@@ -34,7 +34,6 @@ router.post('/', async (req, res) => {
 router.patch('/:id', async (req, res) => {
     try {
         const buyer = await Buyers.findByIdAndUpdate(req.params.id, {isSlotBooked: 'isBooked'}, { new: true});
-        console.log(buyer)
         res.send(buyer); 
     } catch (error) {
         res.send(error)

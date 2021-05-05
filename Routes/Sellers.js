@@ -23,8 +23,7 @@ router.patch('/', async (req, res) => {
 router.patch('/removeSlot', async (req, res) => {
     try {
         const seller = await Sellers.findById(req.body.sellerId);
-        // const b = seller.slots.filter(a => a !== req.body.slot);
-        const updatedSeller = await Sellers.findByIdAndUpdate(req.body.sellerId, {slots : seller.slots.filter(a => a !== req.body.slot)},{ new: true })
+        const updatedSeller = await Sellers.findByIdAndUpdate(req.body.sellerId, {slots : seller.slots.filter(a => a._id.toString() !== req.body.slot._id)},{ new: true });
         res.send(updatedSeller);
     } catch (error) {
         res.send(error);

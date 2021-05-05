@@ -60,7 +60,7 @@ const Buyer = (props) => {
             </div>
             <label htmlFor="contact" className="form-label">Contact</label>
             <div className="input-group mb-3">
-              <div class="input-group-prepend"><em class="input-group-text">+91</em></div>
+              <div className="input-group-prepend"><em className="input-group-text">+91</em></div>
               <input value={values.contact} onChange={handleInputChange} name="contact" type="text" placeholder="Your Contact No." className="form-control" maxLength="10" minLength="10" />
             </div>
             <div className="mr-3 mt-4">
@@ -81,7 +81,7 @@ const Buyer = (props) => {
                 <p className="card-text">With supporting text below as a natural lead-in to additional content.</p>
                 {person.slots.length > 0 ? (<div>
                   <p className="card-text">All Availabel Slots</p>
-                  {person.slots.map(a => (<span key={a} className="badge badge-secondary p-2 mx-1 shadow" style={{ cursor: 'pointer' }} onClick={() => handleShow(person._id, a)}>{a.time}<br></br><div className="mt-1"><strong>({a.date})</strong></div></span>))}</div>) : <p className="text-danger"> This Seller Does Not Allow Any Booking For Now.</p>
+                  {person.slots.map((a) => (<span key={a._id} className="badge badge-secondary p-2 mx-1 shadow" style={{ cursor: 'pointer' }} onClick={() => handleShow(person._id, a)}>{a.time}<br></br><div key={index} className="mt-1"><strong>({a.date})</strong></div></span>))}</div>) : <p className="text-danger"> This Seller Does Not Allow Any Booking For Now.</p>
                 }
               </div>
             </div>

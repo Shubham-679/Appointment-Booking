@@ -16,7 +16,10 @@ const buyersSchema = new mongoose.Schema({
     required: true
   },
   slot: {
-    type: String,
+    type: Object,
+    _id: mongoose.Schema.Types.ObjectId,
+    date: String,
+    time: String,
     required: true
   },
   isSlotBooked: {

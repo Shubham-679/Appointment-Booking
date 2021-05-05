@@ -5,10 +5,11 @@ const sellerSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    slots : {
-        type : Array,
-        required : true
-    }
+    slots : [{
+        id : { type: mongoose.Types.ObjectId },
+        date : { type: String },
+        time : { type: String }
+    }]
 })
 
 const Sellers = mongoose.model('Sellers', sellerSchema);
