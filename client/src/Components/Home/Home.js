@@ -1,8 +1,5 @@
 import React from 'react';
-import Seller from '../Seller/Seller';
-import Buyer from '../Buyer/Buyer'
 import { fetchSellers, fetchAllBuyers } from '../../Services/services'
-import { Redirect } from "react-router-dom";
 
 const Home = (props) => {
     const [ person, setPerson ] = React.useState('');

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Button, Modal } from "react-bootstrap";
+import DatePicker from 'react-datepicker';
 import { createSlot, buyerRequest, cancelRequest } from '../../Services/services';
+import "react-datepicker/dist/react-datepicker.css";
 
 const Seller = (props) => {
     const [person, setPerson] = React.useState('');
@@ -9,6 +11,8 @@ const Seller = (props) => {
     const [show, setShow] = React.useState(false);
     const [values, setValues] = React.useState({});
     const [selectedBuyers, setSelectedBuyers] = React.useState([])
+    // const [date, setDate] = useState(moment().toDate())
+    const [date, setDate] = React.useState(new Date().toLocaleDateString());
 
     const handleRadioChange = (e, id) => {
         setPerson(e.target.value);
@@ -18,7 +22,7 @@ const Seller = (props) => {
     }
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
+    
     const options = [
         { id: 1, slot: '10AM - 11AM' },
         { id: 2, slot: '11AM - 12AM' },
@@ -35,13 +39,13 @@ const Seller = (props) => {
         // if (errorMessages) err[name] = errorMessages;
         // else delete err[name];
         // setErrors((errors) => err || {});
-        setValues({ slot: value, id: seller._id });
+        setValues({ slot: { time: value, date: date}, id: seller._id });
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if(seller.slots.includes(values.slot)) return alert('Already Created Please Select Another One');
-        if(!values.slot) return alert('Please Select Any One Option');
+        if (seller.slots.includes(values.slot)) return alert('Already Created Please Select Another One');
+        if (!values.slot) return alert('Please Select Any One Option');
         seller.slots.push(values.slot);
         // const er = validate();
         // setErrors((errors) => er || {});
@@ -62,38 +66,48 @@ const Seller = (props) => {
         setBuyers(buyers.filter(a => a._id !== id));
         cancelRequest(id);
     }
-    const date = new Date().toDateString();
+
+    const handleDateInput = (date) => {
+        if (!date) return
+        setDate(date.toLocaleDateString());
+    }
+
+    const isWeekday = date => {
+        const day = date.getDay();
+        return day !== 0 && day !== 6;
+    };
 
     return (
         <div className="container">
             <div className="mt-5">
-            <h1 className="display-4 fw-bold">Appointment Booking System</h1>
+                <h1 className="display-4 fw-bold">Appointment Booking System</h1>
             </div>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton><Modal.Title>Add New Slot</Modal.Title></Modal.Header>
                 <Modal.Body>
-                <p className="fw-bold ml-3"> {date}</p>
                     <form>
-                        <div className="col-4">
-                            <label htmlFor="slot" className="form-label">Select Slot</label>
-                            <select name="slot" id="slot" className="form-control" onChange={handleInputChange}>
-                                <option value="" />
-                                {options.map((option) => (
-                                    <option key={option.id} value={option.slot}>
-                                        {option.slot}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="m-3">
-                            <Button variant="primary" type="submit" onClick={handleSubmit}>Submit</Button>
+                        <div className="row">
+                            <div className="col-4 mb-4">
+                                <label htmlFor="Date" className="form-label ml-1">Select Date</label><br></br>
+                                <DatePicker className="form-control" selected={new Date()} name="date" id="date" label="Date" minDate={new Date()} filterDate={isWeekday} onChange={handleDateInput}/>
+                            </div>
+                            <div className="col-4 mb-4">
+                                <label htmlFor="slot" className="form-label">Select Slot</label>
+                                <select name="slot" id="slot" className="form-control" onChange={handleInputChange}>
+                                    <option value="" />
+                                    {options.map((option) => (<option key={option.id} value={option.slot}>{option.slot}</option>))}
+                                </select>
+                            </div>
+                            <div className="col-4 mt-4">
+                                <Button className="mt-2" variant="primary" type="submit" onClick={handleSubmit}>Submit</Button>
+                            </div>
                         </div>
                     </form>
                 </Modal.Body>
             </Modal>
             {!person && props.location && props.location.state.sellers.map((seller) => (
                 <div className="form-check" key={seller._id}>
-                    <input className="form-check-input" style={{width:"16px", height:"16px"}} type="radio" id={seller.id} name={seller.name} value={seller.name} checked={seller.name === person} onChange={(e) => handleRadioChange(e, seller._id)} />
+                    <input className="form-check-input" style={{ width: "16px", height: "16px" }} type="radio" id={seller.id} name={seller.name} value={seller.name} checked={seller.name === person} onChange={(e) => handleRadioChange(e, seller._id)} />
                     <label htmlFor="seller"><strong className="h5">{seller.name}</strong></label>
                 </div>
             ))}
@@ -102,7 +116,7 @@ const Seller = (props) => {
                     <h1 className="display-5 fw-bold text-capitalize">{seller.name}</h1>
                     <div className="col-lg-6 mx-auto">
                         <p className="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
-                        <p className="lead mb-4">Created Slots : {seller.slots.map(a => (<span class="card-text badge badge-secondary p-2 m-1 shadow">{a}</span>))}</p>
+                        <p className="lead mb-4">Created Slots : {seller.slots.map(a => (<span class="card-text badge badge-secondary p-2 m-1 shadow">{a.time}<small className="mx-2">({a.date})</small></span>))}</p>
                         <div className="d-grid gap-2 d-sm-flex justify-content-sm-center">
                             <button type="button" className="btn btn-warning btn-lg px-4 me-sm-3 shadow" onClick={handleShow}>Add Slot</button>
                         </div>
@@ -113,7 +127,7 @@ const Seller = (props) => {
                     <div className="col-md-5 bg-info shadow" style={{ width: "46rem" }}>
                         <h2 className="display-5 fw-bold py-4">Requested Appointments</h2>
                         {buyers.map(buyer => (
-                            <div className="card my-3 bg-secondary shadow" style={{ width: "18rem", marginLeft:"6rem", position:'relative' }}>
+                            <div className="card my-3 bg-secondary shadow" style={{ width: "18rem", marginLeft: "6rem", position: 'relative' }}>
                                 <div className="card-body text-white">
                                     <h5 className="card-title text-capitalize">{buyer.name}</h5>
                                     <p className="card-text">Contact : {buyer.contact}</p>
@@ -130,7 +144,7 @@ const Seller = (props) => {
                     <div className="col-md-5 bg-info shadow" style={{ width: "46rem" }}>
                         <h2 className="display-5 fw-bold py-4">Scheduled Appointments</h2>
                         {selectedBuyers.map(buyer => (
-                            <div className="card my-3 bg-secondary shadow" style={{ width: "18rem", marginLeft: "6rem", position:'relative' }}>
+                            <div className="card my-3 bg-secondary shadow" style={{ width: "18rem", marginLeft: "6rem", position: 'relative' }}>
                                 <div className="card-body text-white text-center">
                                     <h5 className="card-title text-capitalize">{buyer.name}</h5>
                                     <p className="card-text">Contact : {buyer.contact}</p>
